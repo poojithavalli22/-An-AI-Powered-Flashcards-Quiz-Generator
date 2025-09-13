@@ -50,19 +50,19 @@ An AI-powered web application that helps learners generate flashcards and quizze
 ![Home](./screenshots/Home.png) 
 
 ### 🔹 Generate from Text & PDF  
-![Generate](./screenshots/generate.png)  
+![Generate](./screenshots/Generate.png)  
 
 ### 🔹 Flashcards View  
-![Flashcards](./flascards.png) 
+![Flashcards](./Flascards.png) 
 
 ### 🔹 Test Setup  
-![Test Setup](./screenshots/5e322f34-a333-47c3-aa9f-test-setup.png)
+![Test Setup](./screenshots/Test-Setup.png)
 
 ### 🔹 Test in Progress  
-![Test Progress](./screenshots/test-progress.png)  
+![Test Progress](./screenshots/Test-Progress.png)  
 
 ### 🔹 Test Results  
-![Test Results](./screenshots/test-results.png)  
+![Test Results](./screenshots/Test-Results.png)  
 
 ---
 
