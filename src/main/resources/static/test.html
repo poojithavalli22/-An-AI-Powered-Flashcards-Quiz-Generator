@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Flashcard Test</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="test.css">
+</head>
+<body>
+<!-- Fixed Header -->
+<header class="site-header">
+  <nav class="nav-bar">
+    <div class="brand" onclick="window.location.href='/index.html'" style="cursor: pointer;"><i class="fas fa-brain"></i> Synapse Prep</div>
+    <div class="nav-links">
+      <a class="nav-link" href="/index.html">Home</a>
+      <a class="nav-link" href="/about.html">About</a>
+      <a class="nav-link" href="/contact.html">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="header">
+    <h1><i class="fas fa-clipboard-check"></i> Test Your Knowledge</h1>
+    <p>Powered by AI</p>
+  </div>
+
+  <!-- Carousel Section -->
+  <div class="carousel-container">
+    <div class="carousel-slide active" id="slide1">
+      <div class="carousel-content">
+        <div class="carousel-image"><i class="fas fa-brain"></i></div>
+        <h3 class="carousel-title">Enhance Your Learning</h3>
+        <p class="carousel-description">
+          Test your understanding of flashcards with AI-powered questions.
+          Perfect for reviewing and mastering your knowledge.
+        </p>
+      </div>
+    </div>
+    <div class="carousel-slide" id="slide2">
+      <div class="carousel-content">
+        <div class="carousel-image"><i class="fas fa-lightbulb"></i></div>
+        <h3 class="carousel-title">Interactive Learning</h3>
+        <p class="carousel-description">
+          Engage with AI-generated questions that adapt to your learning pace.
+          Perfect for engaging and challenging yourself.
+        </p>
+      </div>
+    </div>
+    <div class="carousel-slide" id="slide3">
+      <div class="carousel-content">
+        <div class="carousel-image"><i class="fas fa-chart-line"></i></div>
+        <h3 class="carousel-title">Track Your Progress</h3>
+        <p class="carousel-description">
+          Monitor your performance and track your learning journey.
+          Perfect for understanding your strengths and areas for improvement.
+        </p>
+      </div>
+    </div>
+    <div class="carousel-slide" id="slide4">
+      <div class="carousel-content">
+        <div class="carousel-image"><i class="fas fa-user-tie"></i></div>
+        <h3 class="carousel-title">Personalized Experience</h3>
+        <p class="carousel-description">
+          Get AI-powered questions tailored to your specific learning needs.
+          Perfect for maximizing your learning potential.
+        </p>
+      </div>
+    </div>
+
+    <button class="carousel-arrow prev" onclick="prevSlide()"><i class="fas fa-chevron-left"></i></button>
+    <button class="carousel-arrow next" onclick="nextSlide()"><i class="fas fa-chevron-right"></i></button>
+
+    <div class="carousel-nav">
+      <span class="carousel-dot active" onclick="goToSlide(0)"></span>
+      <span class="carousel-dot" onclick="goToSlide(1)"></span>
+      <span class="carousel-dot" onclick="goToSlide(2)"></span>
+      <span class="carousel-dot" onclick="goToSlide(3)"></span>
+    </div>
+  </div>
+
+  <!-- Test Configuration -->
+  <div class="test-config" id="testConfig">
+    <div class="test-info">
+      <h3><i class="fas fa-info-circle"></i> Test Information</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Total Questions</strong>
+          <span id="totalQuestions">0</span>
+        </div>
+        <div class="info-item">
+          <strong>Question Type</strong>
+          <span id="questionType">MCQ</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="testTime">Set Test Duration (minutes):</label>
+      <input type="number" id="testTime" min="5" max="180" value="30" class="form-control">
+    </div>
+
+    <div>
+      <button class="btn back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      <button class="btn" onclick="startTest()">
+        <i class="fas fa-play"></i> Start Test
+      </button>
+    </div>
+  </div>
+
+  <!-- Test Interface -->
+  <div class="test-interface" id="testInterface">
+    <div class="test-header">
+      <h2><i class="fas fa-clipboard-list"></i> Test in Progress</h2>
+      <div class="test-timer">
+        <i class="fas fa-clock"></i>
+        <span id="timer">00:00</span>
+      </div>
+    </div>
+
+    <div class="test-progress">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p>Question <span id="currentQuestionNum">1</span> of <span id="totalQuestionsTest">0</span></p>
+    </div>
+
+    <div class="question-container" id="questionContainer">
+      <!-- Questions will be populated here -->
+    </div>
+
+    <div class="test-navigation">
+      <button class="nav-btn" id="prevBtn" onclick="previousQuestion()" disabled>
+        <i class="fas fa-chevron-left"></i> Previous
+      </button>
+      <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">
+        Next <i class="fas fa-chevron-right"></i>
+      </button>
+      <button class="btn submit-test-btn" id="submitBtn" onclick="submitTest()" style="display: none;">
+        <i class="fas fa-check"></i> Submit Test
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div class="results-section" id="resultsSection">
+    <div class="results-header">
+      <h2><i class="fas fa-trophy"></i> Test Results</h2>
+      <p>Here's how you performed on your test</p>
+    </div>
+
+    <div class="results-summary">
+      <div class="result-card">
+        <h3>Score</h3>
+        <div class="score-display">
+          <span id="scoreDisplay">0</span>/<span id="totalScore">0</span>
+        </div>
+        <div class="percentage">
+          <span id="percentageDisplay">0%</span>
+        </div>
+      </div>
+      <div class="result-stats">
+        <div class="stat-item">
+          <i class="fas fa-check-circle"></i>
+          <span>Correct: <span id="correctAnswers">0</span></span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-times-circle"></i>
+          <span>Incorrect: <span id="incorrectAnswers">0</span></span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-clock"></i>
+          <span>Time Taken: <span id="timeTaken">0:00</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="question-review" id="questionReview">
+      <!-- Question review will be populated here -->
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Flashcards
+      </button>
+      <button class="btn" onclick="exportTestResults()">
+        <i class="fas fa-download"></i> Export Results as PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="test.js"></script>
+
+<style>
+  /* Fixed Footer Styles - Same as main page */
+  .fixed-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(186, 226, 253, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 -2px 8px rgba(186, 226, 253, 0.2);
+      z-index: 100;
+      padding: 15px 0;
+  }
+
+  .fixed-footer p {
+      text-align: center;
+      margin: 0;
+      color: #e5e7eb;
+  }
+
+  .fixed-footer a {
+      color: #2c3e50;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+      display: inline-block;
+  }
+
+  .fixed-footer a:hover {
+      color: #2980b9;
+      text-decoration: none;
+      text-shadow: 0 0 8px rgba(186, 226, 253, 0.5);
+      transform: translateY(-2px);
+      display: inline-block;
+  }
+</style>
+
+<!-- Fixed Footer -->
+<footer class="fixed-footer">
+  <p>
+    <a href="/about.html">About</a>
+    <a href="/contact.html">Contact</a>
+  </p>
+</footer>
+</body>
+</html>

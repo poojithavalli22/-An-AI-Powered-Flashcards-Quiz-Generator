@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Flashcard Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+<header class="site-header">
+    <nav class="nav-bar">
+        <div class="brand" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;"><i class="fas fa-brain"></i> Synapse Prep</div>
+        <div class="nav-links">
+            <a class="nav-link" href="#" onclick="scrollToTop(); return false;">Home</a>
+            <a class="nav-link" href="#generator">Generate</a>
+            <a class="nav-link" href="/about.html">About</a>
+            <a class="nav-link" href="/contact.html">Contact</a>
+        </div>
+    </nav>
+</header>
+<div class="container" id="home">
+    <div class="header">
+        <div class="hero">
+            <div>
+                <h1><i class="fas fa-brain"></i> Synapse Prep</h1>
+                <p>Create Q&A from text or PDF, take tests, and export results.</p>
+                <div class="hero-actions">
+                    <button class="hero-btn" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})"><i class="fas fa-wand-magic-sparkles"></i> Generate Flashcards</button>
+                    <button class="hero-btn secondary" onclick="window.location.href='/test.html'"><i class="fas fa-clipboard-check"></i> Take Test</button>
+                    <button class="hero-btn secondary" onclick="document.getElementById('resultsSection').scrollIntoView({behavior:'smooth'})"><i class="fas fa-layer-group"></i> View Flashcards</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <h3>Quick Actions</h3>
+                <ul style="margin-top:10px; line-height: 1.9;">
+                    <li>Paste text and generate MCQ/True-False/Fill/Short/Long</li>
+                    <li>Upload a PDF and auto-extract questions</li>
+                    <li>Interactive test experience with timer</li>
+                    <li>Export flashcards and results as PDF</li>
+                </ul>
+            </div>
+        </div>
+        <div class="carousel" id="features">
+            <div class="carousel-track" id="carouselTrack">
+                <div class="carousel-slide">
+                    <div>
+                        <h3><i class="fas fa-wand-magic-sparkles"></i> AI-Powered Generation</h3>
+                        <p>Transform any text or PDF into intelligent flashcards using Google Gemini AI technology.</p>
+                    </div>
+                    <div>
+                        <h3><i class="fas fa-brain"></i> Smart Learning</h3>
+                        <p>Advanced AI algorithms create contextually relevant questions and comprehensive answers.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div>
+                        <h3><i class="fas fa-file-pdf"></i> PDF Processing</h3>
+                        <p>Upload PDF documents and automatically extract content for flashcard generation.</p>
+                    </div>
+                    <div>
+                        <h3><i class="fas fa-keyboard"></i> Text Input</h3>
+                        <p>Paste any content - articles, notes, or study materials to create flashcards instantly.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div>
+                        <h3><i class="fas fa-clipboard-check"></i> Interactive Testing</h3>
+                        <p>Take timed tests with progress tracking, auto-submission, and detailed performance analytics.</p>
+                    </div>
+                    <div>
+                        <h3><i class="fas fa-list-check"></i> Multiple Formats</h3>
+                        <p>Support for MCQ, True/False, Fill-in-the-blank, Short and Long Answer questions.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div>
+                        <h3><i class="fas fa-download"></i> Export & Share</h3>
+                        <p>Download flashcards and test results as professional PDF documents for offline study.</p>
+                    </div>
+                    <div>
+                        <h3><i class="fas fa-gauge-high"></i> Performance Analytics</h3>
+                        <p>Track your learning progress with detailed score reports and question-by-question review.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-controls" id="carouselDots"></div>
+        </div>
+    </div>
+
+    <div class="main-content" id="generator">
+        <div class="input-section">
+            <!-- Text Input Card -->
+            <div class="input-card">
+                <h3><i class="fas fa-keyboard"></i> Text Input</h3>
+                <div class="form-group">
+                    <label for="questionType">Question Type:</label>
+                    <select id="questionType" required>
+                        <option value="">Select question type</option>
+                        <option value="MCQ">Multiple Choice Questions</option>
+                        <option value="True/False">True/False Questions</option>
+                        <option value="Fill in the blanks">Fill in the Blanks</option>
+                        <option value="Short answer">Short Answer Questions</option>
+                        <option value="Long answer">Long Answer Questions</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="numberOfQuestions">Number of Questions:</label>
+                    <input type="number" id="numberOfQuestions" min="1" max="50" value="10" placeholder="Enter number of questions (1-50)">
+                </div>
+                <div class="form-group">
+                    <label for="textInput">Enter your text:</label>
+                    <textarea id="textInput" placeholder="Paste your text here to generate flashcards..."></textarea>
+                </div>
+                <button class="btn" id="generateTextBtn" onclick="generateFromText()" disabled>
+                    <i class="fas fa-magic"></i> Generate Flashcards
+                </button>
+            </div>
+
+            <!-- PDF Upload Card -->
+            <div class="input-card">
+                <h3><i class="fas fa-file-pdf"></i> PDF Upload</h3>
+                <div class="form-group">
+                    <label for="pdfQuestionType">Question Type:</label>
+                    <select id="pdfQuestionType" required>
+                        <option value="">Select question type</option>
+                        <option value="MCQ">Multiple Choice Questions</option>
+                        <option value="True/False">True/False Questions</option>
+                        <option value="Fill in the Blanks</option>
+                            <option value="Short answer">Short Answer Questions</option>
+                        <option value="Long answer">Long Answer Questions</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pdfNumberOfQuestions">Number of Questions:</label>
+                    <input type="number" id="pdfNumberOfQuestions" min="1" max="50" value="10" placeholder="Enter number of questions (1-50)">
+                </div>
+                <div class="file-upload" id="fileUpload" onclick="document.getElementById('pdfFile').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to upload PDF or drag & drop</p>
+                    <p class="file-info" id="fileInfo">No file selected</p>
+                </div>
+                <input type="file" id="pdfFile" accept=".pdf" style="display: none;" onchange="handleFileSelect(event)">
+                <button class="btn" onclick="generateFromPdf()" id="pdfBtn" disabled>
+                    <i class="fas fa-file-pdf"></i> Generate from PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Section -->
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner"></i>
+            <p style="margin-top: 20px; color: #6b7280;">Generating your flashcards...</p>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2>Your Generated Flashcards</h2>
+                <p>Click on any flashcard to flip between question and answer</p>
+            </div>
+            <div class="flashcards-grid" id="flashcardsGrid"></div>
+            <div class="export-section">
+                <button class="export-btn" onclick="takeTest()">
+                    <i class="fas fa-clipboard-check"></i> Take Test
+                </button>
+                <button class="export-btn" onclick="exportToPDF()">
+                    <i class="fas fa-file-pdf"></i> Export as PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fixed Footer -->
+<footer class="fixed-footer">
+    <p>
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+    </p>
+</footer>
+<!-- Test Interface Modal -->
+<div id="testInterfaceModal" class="modal">
+    <div class="modal-content test-interface">
+        <div class="modal-header">
+            <div class="test-header">
+                <h2><i class="fas fa-clipboard-list"></i> Test in Progress</h2>
+                <div class="test-timer">
+                    <i class="fas fa-clock"></i>
+                    <span id="timer">00:00</span>
+                </div>
+            </div>
+            <span class="close" onclick="closeTestInterface()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="test-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p>Question <span id="currentQuestionNum">1</span> of <span id="totalQuestionsTest">0</span></p>
+            </div>
+
+            <div class="question-container" id="questionContainer">
+                <!-- Questions will be populated here -->
+            </div>
+
+            <div class="test-navigation">
+                <button class="nav-btn" id="prevBtn" onclick="previousQuestion()" disabled>
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="btn submit-test-btn" id="submitBtn" onclick="submitTest()" style="display: none;">
+                    <i class="fas fa-check"></i> Submit Test
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Test Results Modal -->
+<div id="resultsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-trophy"></i> Test Results</h2>
+            <span class="close" onclick="closeResultsModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="results-summary">
+                <div class="result-card">
+                    <h3>Score</h3>
+                    <div class="score-display">
+                        <span id="scoreDisplay">0</span>/<span id="totalScore">0</span>
+                    </div>
+                    <div class="percentage">
+                        <span id="percentageDisplay">0%</span>
+                    </div>
+                </div>
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Correct: <span id="correctAnswers">0</span></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Incorrect: <span id="incorrectAnswers">0</span></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Time Taken: <span id="timeTaken">0:00</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="question-review" id="questionReview">
+                <!-- Question review will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeResultsModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+                <button class="export-btn" onclick="exportTestResults()">
+                    <i class="fas fa-download"></i> Export Results
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="index.js"></script>
+<script>
+    document.getElementById('textInput').addEventListener('input', function() {
+        const btn = document.getElementById('generateTextBtn');
+        btn.disabled = this.value.trim() === '';
+    });
+</script>
+</body>
+</html>
